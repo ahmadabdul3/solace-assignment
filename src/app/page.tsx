@@ -126,7 +126,7 @@ export default function Home() {
     }, []);
 
     return (
-        <main style={{ margin: "24px" }}>
+        <main className={styles.page}>
             <h1 className={styles.pageTitle}>
                 Solace Advocates
             </h1>
@@ -139,56 +139,56 @@ export default function Home() {
                     placeholder='John...'
                 />
             </div>
-            <br />
-            <br />
-            {
-                loading && (
-                    <div>
-                        {message}
-                    </div>
-                )
-            }
-            {
-                !loading && (
-                    <table>
-                        <thead>
-                            <tr>
-                                <Th>First Name</Th>
-                                <Th>Last Name</Th>
-                                <Th>City</Th>
-                                <Th>Degree</Th>
-                                <Th>Specialties</Th>
-                                <Th>Years of Experience</Th>
-                                <Th>Phone Number</Th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredAdvocates.map((advocate: advocate, i) => {
-                                // - for the key, ideally we have an ID that's unique
-                                // - for now (until I set up DB properly) I will just
-                                //   use a combination of name + index
-                                // - using plain index is not reliable, especially if order
-                                //   can change, and can cause performance issues
-                                return (
-                                    <tr key={advocate.firstName + advocate.lastName + i}>
-                                        <Td>{advocate.firstName}</Td>
-                                        <Td>{advocate.lastName}</Td>
-                                        <Td>{advocate.city}</Td>
-                                        <Td>{advocate.degree}</Td>
-                                        <Td>
-                                            {advocate.specialties.map((s, j) => (
-                                                <div key={s + j}>{s}</div>
-                                            ))}
-                                        </Td>
-                                        <Td>{advocate.yearsOfExperience}</Td>
-                                        <Td>{advocate.phoneNumber}</Td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                )
-            }
+            <section className={styles.tableContainer}>
+                {
+                    loading && (
+                        <div>
+                            {message}
+                        </div>
+                    )
+                }
+                {
+                    !loading && (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <Th>First Name</Th>
+                                    <Th>Last Name</Th>
+                                    <Th>City</Th>
+                                    <Th>Degree</Th>
+                                    <Th>Specialties</Th>
+                                    <Th>Years of Experience</Th>
+                                    <Th>Phone Number</Th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredAdvocates.map((advocate: advocate, i) => {
+                                    // - for the key, ideally we have an ID that's unique
+                                    // - for now (until I set up DB properly) I will just
+                                    //   use a combination of name + index
+                                    // - using plain index is not reliable, especially if order
+                                    //   can change, and can cause performance issues
+                                    return (
+                                        <tr key={advocate.firstName + advocate.lastName + i}>
+                                            <Td>{advocate.firstName}</Td>
+                                            <Td>{advocate.lastName}</Td>
+                                            <Td>{advocate.city}</Td>
+                                            <Td>{advocate.degree}</Td>
+                                            <Td>
+                                                {advocate.specialties.map((s, j) => (
+                                                    <div key={s + j}>{s}</div>
+                                                ))}
+                                            </Td>
+                                            <Td>{advocate.yearsOfExperience}</Td>
+                                            <Td>{advocate.phoneNumber}</Td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    )
+                }
+            </section>
         </main>
     );
 }

@@ -1,9 +1,17 @@
+.page {
+    margin: 24px;
+}
+
 .pageTitle {
     font-size: 36px;
 }
 
 .searchBar {
     margin-top: 24px;
+}
+
+.tableContainer {
+    margin-top: 48px;
 }
 
 .tableCell {
