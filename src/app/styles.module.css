@@ -1,0 +1,16 @@
+.pageTitle {
+    font-size: 36px;
+}
+
+.searchBar {
+    margin-top: 24px;
+}
+
+.tableCell {
+    padding: 16px;
+    width: 200px;
+    min-height: 100px;
+    text-align: left;
+    vertical-align: top;
+    border: 1px solid #eee;
+}
