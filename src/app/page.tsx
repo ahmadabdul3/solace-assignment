@@ -9,6 +9,7 @@ import {
 } from 'react';
 import styles from './styles.module.css';
 import Input from '@/components/input';
+import Image from 'next/image';
 
 // - this should move to a more shared location
 // - keeping it here to make review easier
@@ -128,7 +129,15 @@ export default function Home() {
     return (
         <main className={styles.page}>
             <h1 className={styles.pageTitle}>
-                Solace Advocates
+                <Image
+                    src="/solace.svg"
+                    alt="Solace"
+                    priority
+                    width="0"
+                    height="0"
+                    className={styles.solaceLogo}
+                />
+                <span>Advocates</span>
             </h1>
             <div className={styles.searchBar}>
                 <Input
@@ -149,8 +158,8 @@ export default function Home() {
                 }
                 {
                     !loading && (
-                        <table>
-                            <thead>
+                        <table className={styles.table}>
+                            <thead className={styles.tableHeader}>
                                 <tr>
                                     <Th>First Name</Th>
                                     <Th>Last Name</Th>
@@ -193,11 +202,11 @@ export default function Home() {
     );
 }
 
-type containerType = {
+type container = {
     children?: ReactNode,
 }
 
-function Th({ children }: containerType) {
+function Th({ children }: container) {
     return (
         <th className={styles.tableCell}>
             {children}
@@ -205,7 +214,7 @@ function Th({ children }: containerType) {
     );
 }
 
-function Td({ children }: containerType) {
+function Td({ children }: container) {
     return (
         <td className={styles.tableCell}>
             {children}
