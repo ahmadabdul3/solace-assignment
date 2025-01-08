@@ -10,12 +10,14 @@ I decided to work on the front-end first because it had the most low-hanging fru
 
 After fixing obvious bugs, and cleaning up the anti-patterns/unnecessary code, I decided to do give the UI a simple facelift. Since I was already working on the front-end, it made sense to just finish off the rest of the work I had planned for it anyway. The main goal of updating the UI was to make it easier to use and understand - more intuitive. Keeping with the 'keep it simple' approach, I wanted to update the UI just enough for it to do it's job - no extra bells and whistles. A good cohesive design takes time, so my philosophy is to keep UI as simple as possible - using mainly a white/gray color palette, with just 1 extra primary color (which is the green one I got from solace's website).
 
+One thing I wanted to point out - I left the table structure as-is to keep changes in the PRs as minimal as possible for easier review. I would normally abstract things like this into reusable components, and to encapsulate any logic that shouldn't be repeated elsewhere.
+
 ### Back-end
-At this point I was already around the 2 hour mark, but I didn't want to submit the assignment without setting up some simple back-end functionality - I wanted to at least get the advocate list coming from the DB, and have some basic search functionality. Just want to point out that I've never used the drizzle ORM before, but it was pretty easy to work with, and the docs were helpful.
+At this point I was already around the 2 hour mark, but I didn't want to submit the assignment without setting up some simple back-end functionality - I wanted to at least get the advocate list coming from the DB, and have some basic search functionality. Just want to point out that I've never used drizzle-orm before, but it was pretty easy to work with, and the docs were helpful.
 
 In any case, I got the DB setup, and I changed the ID field for the advocates to a UUID - I generally prefer UUIDs over integers (more future proof in case the system needs to be used with other systems). This allowed me to use the DB for fetching the list of advocates, which also required me to update the front-end so the filtering/search happens via API request rather than a front-end filter.
 
-I didn't fully implement the search (especially on the jsonb and int columns) because by the point I had hit the 3 hour mark and getting those columns searchable would have required at least another hour of work (which I'm happy to do if the team wants me to - I stopped at 3 hours because I've been told that I "didnt follow directions" in previous interviews for going over the time too much). I did outline some approaches (in the code) I would take to make those columns searchable (which I'll also paste below).
+I didn't fully finish implementing the search (especially on the jsonb and int columns) because by this point I had hit the 3 hour mark and getting those columns searchable would have required at least another hour of work (which I'm happy to do if the team wants me to - I stopped at 3 hours because I've been told that I "didnt follow directions" in previous interviews for going over the time too much). I did outline some approaches (in the code) I would take to make those columns searchable (which I'll also paste below).
 
 from the code:
 ```
