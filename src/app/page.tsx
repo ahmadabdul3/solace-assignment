@@ -10,10 +10,21 @@ import {
 import styles from './styles.module.css';
 import Input from '@/components/input';
 import Image from 'next/image';
+// - using axios because it abstracts
+//   away some of fetch's weirdnesses
+// - for example, we have to manually
+//   parse the .json
+// - and we have to manually catch 500 errors
+//   and handle 4xx errors separately
+// - we could abstract ourselves,
+//   but axios does it for us and gives us
+//   other utility functionality for free
+import axios from 'axios';
 
 // - this should move to a more shared location
 // - keeping it here to make review easier
 type advocate = {
+    id: string,
     firstName: string,
     lastName: string,
     city: string,
@@ -35,6 +46,11 @@ function useDebounced(cb: Function, deps: Array<any>, timeout: number = 200) {
     }, deps || []);
 }
 
+// - we dont necessarily need this (which is why
+//   it was removed) because useDebounced will
+//   run on mount anyway
+// - keeping it here for an example of how
+//   I'd handle a single-fire mount hook
 function useOnMount(cb: Function) {
     const mounted = useRef<boolean>(false);
 
@@ -52,75 +68,21 @@ function minimalLoadingTimeSimulator(timeout: number = 500) {
 }
 
 export default function Home() {
-    const [advocates, setAdvocates] = useState([]);
-    const [filteredAdvocates, setFilteredAdvocates] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState('');
+    const {
+        loading,
+        message,
+        advocates,
+        loadAdvocates,
+    } = useAdvocateLoader();
 
-    useOnMount(() => {
-        async function fetchAdvocates() {
-            setMessage('Loading advocates...');
-            try {
-                const res = await Promise.all([
-                    fetch("/api/advocates"),
-                    // - loading is too quick, so the 'loading'
-                    //   message is flashing and can be confusing
-                    //   for the end user
-                    // - this simulator will allow the page
-                    //   to load for a minimum of 500ms (even
-                    //   if data fetching finishes faster) so we
-                    //   can show the loading message properly
-                    //   instead of it flashing.
-                    // - this should make the UI/MX more intuitive
-                    // - and 500ms is just short enough to not
-                    //   make the UI feel slow
-                    minimalLoadingTimeSimulator()
-                ]);
-
-                const advocatesRes = res[0];
-
-                if (!advocatesRes.ok) {
-                    throw new Error(`Response status: ${advocatesRes.status}`);
-                }
-
-                const jsonRes = await advocatesRes.json();
-                setAdvocates(jsonRes.data);
-            } catch (e) {
-                console.error('There was an error fetching advocates: ', e);
-                setMessage("We couldn't fetch advocates. Please try again by refreshing the page")
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchAdvocates();
-    });
+    useDebounced(() => {
+        loadAdvocates({ searchTerm });
+    }, [searchTerm]);
 
     const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     }, []);
-
-    useDebounced(() => {
-        let filteredAdvocates = advocates;
-
-        if (searchTerm) {
-            const lowered = searchTerm.toLowerCase();
-            filteredAdvocates = advocates.filter((advocate: advocate) => {
-                return (
-                    advocate.firstName.toLowerCase().includes(lowered) ||
-                    advocate.lastName.toLowerCase().includes(lowered) ||
-                    advocate.city.toLowerCase().includes(lowered) ||
-                    advocate.degree.toLowerCase().includes(lowered) ||
-                    advocate.specialties.find(s => s.toLowerCase().includes(lowered)) ||
-                    advocate.yearsOfExperience.toString().toLowerCase().includes(lowered) ||
-                    advocate.phoneNumber.toString().includes(lowered)
-                );
-            });
-        }
-
-        setFilteredAdvocates(filteredAdvocates);
-    }, [searchTerm, advocates]);
 
     const clearSearch = useCallback(() => {
         setSearchTerm('');
@@ -150,8 +112,8 @@ export default function Home() {
             </div>
             <section className={styles.tableContainer}>
                 {
-                    loading && (
-                        <div>
+                    message && (
+                        <div className={styles.loadMessage}>
                             {message}
                         </div>
                     )
@@ -171,14 +133,9 @@ export default function Home() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredAdvocates.map((advocate: advocate, i) => {
-                                    // - for the key, ideally we have an ID that's unique
-                                    // - for now (until I set up DB properly) I will just
-                                    //   use a combination of name + index
-                                    // - using plain index is not reliable, especially if order
-                                    //   can change, and can cause performance issues
+                                {advocates.map((advocate: advocate, i) => {
                                     return (
-                                        <tr key={advocate.firstName + advocate.lastName + i}>
+                                        <tr key={advocate.id}>
                                             <Td>{advocate.firstName}</Td>
                                             <Td>{advocate.lastName}</Td>
                                             <Td>{advocate.city}</Td>
@@ -200,6 +157,61 @@ export default function Home() {
             </section>
         </main>
     );
+}
+
+function useAdvocateLoader() {
+    const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState('');
+    const [advocates, setAdvocates] = useState([]);
+
+    const loadAdvocates = useCallback(async ({ searchTerm = '' } = {}) => {
+        try {
+            setLoading(true);
+            setMessage('Loading advocates...');
+            const url = '/api/advocates?searchTerm=' + searchTerm;
+
+            const res = await Promise.all([
+                axios(url),
+                // - loading is too quick, so the 'loading'
+                //   message is flashing and can be confusing
+                //   for the end user
+                // - this simulator will allow the page
+                //   to load for a minimum of 500ms (even
+                //   if data fetching finishes faster) so we
+                //   can show the loading message properly
+                //   instead of it flashing.
+                // - this should make the UI/MX more intuitive
+                // - if we were to use server-components, we can
+                //   pre-load the data on initial render
+                //   and avoid needing a spinner
+                // - we could also use getInitialProps or
+                //   a similar pattern to load the data on
+                //   the server-side
+                // - and 500ms is just short enough to not
+                //   make the UI feel slow
+                minimalLoadingTimeSimulator()
+            ]);
+            const jsonRes = res[0];
+
+            setAdvocates(jsonRes.data.data);
+            let message = '';
+            if (jsonRes.data.length < 1) {
+                message = 'No advocates found';
+            }
+            setMessage(message);
+        } catch (e) {
+            setMessage('Error loading advocates');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return {
+        loading,
+        message,
+        advocates,
+        loadAdvocates,
+    };
 }
 
 type container = {
