@@ -7,6 +7,10 @@
     height: auto;
 }
 
+.loadMessage {
+    margin-bottom: 16px;
+}
+
 .pageTitle {
     font-size: 24px;
     font-weight: bold;
