@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import {
+    useEffect,
+    useState,
+    useRef,
+    useCallback,
+    ReactNode,
+} from 'react';
+import styles from './styles.module.css';
+import Input from '@/components/input';
+import Image from 'next/image';
 
 // - this should move to a more shared location
 // - keeping it here to make review easier
@@ -96,14 +105,16 @@ export default function Home() {
         let filteredAdvocates = advocates;
 
         if (searchTerm) {
+            const lowered = searchTerm.toLowerCase();
             filteredAdvocates = advocates.filter((advocate: advocate) => {
                 return (
-                    advocate.firstName.includes(searchTerm) ||
-                    advocate.lastName.includes(searchTerm) ||
-                    advocate.city.includes(searchTerm) ||
-                    advocate.degree.includes(searchTerm) ||
-                    advocate.specialties.includes(searchTerm) ||
-                    advocate.yearsOfExperience.toString().includes(searchTerm)
+                    advocate.firstName.toLowerCase().includes(lowered) ||
+                    advocate.lastName.toLowerCase().includes(lowered) ||
+                    advocate.city.toLowerCase().includes(lowered) ||
+                    advocate.degree.toLowerCase().includes(lowered) ||
+                    advocate.specialties.find(s => s.toLowerCase().includes(lowered)) ||
+                    advocate.yearsOfExperience.toString().toLowerCase().includes(lowered) ||
+                    advocate.phoneNumber.toString().includes(lowered)
                 );
             });
         }
@@ -111,77 +122,102 @@ export default function Home() {
         setFilteredAdvocates(filteredAdvocates);
     }, [searchTerm, advocates]);
 
-    const onClick = useCallback(() => {
+    const clearSearch = useCallback(() => {
         setSearchTerm('');
     }, []);
 
     return (
-        <main style={{ margin: "24px" }}>
-            <h1>Solace Advocates</h1>
-            <br />
-            <br />
-            <div>
-                <p>Search</p>
-                <p>
-                    Searching for: <span>{searchTerm}</span>
-                </p>
-                <input
-                    style={{ border: "1px solid black" }}
+        <main className={styles.page}>
+            <h1 className={styles.pageTitle}>
+                <Image
+                    src="/solace.svg"
+                    alt="Solace"
+                    priority
+                    width="0"
+                    height="0"
+                    className={styles.solaceLogo}
+                />
+                <span>Advocates</span>
+            </h1>
+            <div className={styles.searchBar}>
+                <Input
+                    label="Search"
                     onChange={onChange}
                     value={searchTerm}
+                    onClear={clearSearch}
+                    placeholder='John...'
                 />
-                <button onClick={onClick}>Reset Search</button>
             </div>
-            <br />
-            <br />
-            {
-                loading && (
-                    <div>
-                        {message}
-                    </div>
-                )
-            }
-            {
-                !loading && (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>City</th>
-                                <th>Degree</th>
-                                <th>Specialties</th>
-                                <th>Years of Experience</th>
-                                <th>Phone Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredAdvocates.map((advocate: advocate, i) => {
-                                // - for the key, ideally we have an ID that's unique
-                                // - for now (until I set up DB properly) I will just
-                                //   use a combination of name + index
-                                // - using plain index is not reliable, especially if order
-                                //   can change, and can cause performance issues
-                                return (
-                                    <tr key={advocate.firstName + advocate.lastName + i}>
-                                        <td>{advocate.firstName}</td>
-                                        <td>{advocate.lastName}</td>
-                                        <td>{advocate.city}</td>
-                                        <td>{advocate.degree}</td>
-                                        <td>
-                                            {advocate.specialties.map((s, j) => (
-                                                <div key={s + j}>{s}</div>
-                                            ))}
-                                        </td>
-                                        <td>{advocate.yearsOfExperience}</td>
-                                        <td>{advocate.phoneNumber}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                )
-            }
+            <section className={styles.tableContainer}>
+                {
+                    loading && (
+                        <div>
+                            {message}
+                        </div>
+                    )
+                }
+                {
+                    !loading && (
+                        <table className={styles.table}>
+                            <thead className={styles.tableHeader}>
+                                <tr>
+                                    <Th>First Name</Th>
+                                    <Th>Last Name</Th>
+                                    <Th>City</Th>
+                                    <Th>Degree</Th>
+                                    <Th>Specialties</Th>
+                                    <Th>Years of Experience</Th>
+                                    <Th>Phone Number</Th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredAdvocates.map((advocate: advocate, i) => {
+                                    // - for the key, ideally we have an ID that's unique
+                                    // - for now (until I set up DB properly) I will just
+                                    //   use a combination of name + index
+                                    // - using plain index is not reliable, especially if order
+                                    //   can change, and can cause performance issues
+                                    return (
+                                        <tr key={advocate.firstName + advocate.lastName + i}>
+                                            <Td>{advocate.firstName}</Td>
+                                            <Td>{advocate.lastName}</Td>
+                                            <Td>{advocate.city}</Td>
+                                            <Td>{advocate.degree}</Td>
+                                            <Td>
+                                                {advocate.specialties.map((s, j) => (
+                                                    <div key={s + j}>{s}</div>
+                                                ))}
+                                            </Td>
+                                            <Td>{advocate.yearsOfExperience}</Td>
+                                            <Td>{advocate.phoneNumber}</Td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    )
+                }
+            </section>
         </main>
+    );
+}
+
+type container = {
+    children?: ReactNode,
+}
+
+function Th({ children }: container) {
+    return (
+        <th className={styles.tableCell}>
+            {children}
+        </th>
+    );
+}
+
+function Td({ children }: container) {
+    return (
+        <td className={styles.tableCell}>
+            {children}
+        </td>
     );
 }

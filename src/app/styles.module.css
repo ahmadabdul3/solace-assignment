@@ -1,0 +1,49 @@
+.page {
+    margin: 24px;
+}
+
+.solaceLogo {
+    width: 150px;
+    height: auto;
+}
+
+.pageTitle {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: flex-end;
+}
+
+.pageTitle span {
+    margin-bottom: 4px;
+    line-height: 22px;
+}
+
+.searchBar {
+    margin-top: 24px;
+}
+
+.tableContainer {
+    margin-top: 48px;
+}
+
+.tableCell {
+    padding: 16px;
+    width: 200px;
+    min-height: 100px;
+    text-align: left;
+    vertical-align: top;
+    border: 1px solid #eee;
+}
+
+.table {
+    position: relative;
+}
+
+.tableHeader {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    border-bottom: 3px solid #eee;
+    color: #347866;
+}
