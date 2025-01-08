@@ -37,6 +37,8 @@ from the code:
 //   we also make sure to update the dupe column so we have a text equivalent
 ```
 
+One thing I forgot to mention - for searching it might also make sense to use something like elasticsearch instead of implementing our own search solution. Obviously new systems come with a monetary & setup cost, and it might be overkill in some cases, but just wanted to outline the option.
+
 I hope I didn't forget or miss anything - if I do think of something else I'll send a follow up email.
 
 Thanks for taking the time to review this and I'm looking forward to hearing back!
