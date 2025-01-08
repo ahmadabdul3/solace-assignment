@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
             data = await db.select().from(advocates);
         } else {
             // - not going to address this type mismatch here
-            //   (it should be working)
+            //   on the '.where' - (it's working though)
             // - again, hitting the 3 hour mark so not going to
             //   investigate too much further
             data = await db.select().from(advocates).where(or(
