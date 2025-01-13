@@ -39,3 +39,5 @@ npx drizzle-kit push
 ```bash
 curl -X POST http://localhost:3000/api/seed
 ```
+
+docker exec -it solace-candidate-assignment-db-1 /bin/bash
