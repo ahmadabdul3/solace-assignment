@@ -2,11 +2,12 @@
 The 2 primary criteria I followed when tackling this were:
 1. keep it simple - don't over-abstract, don't make too many files (makes it harder to review the assignment).
 2. tackle low-hanging fruit first - this creates a faster feedback loop so I can get more familiar with what I'm working with.
+3. ensure a good user experience
 
 With that in mind, let me explain what I did and why.
 
 ### Front-end first
-I decided to work on the front-end first because it had the most low-hanging fruit. The other reason was because it required less setup - I could start getting my hands dirty with the code so I'm more familiar with it. Finally, I wanted to get the code to a clean state before adding any new functionality, and the back-end didn't really have any bugs to fix (not saying that there aren't things that can be changed to make it more efficient for usage, but it worked fine once set-up, so no glaring things to address right off the bat).
+I decided to work on the front-end first because it had the most low-hanging fruit, and I really wanted to make sure the UI/UX was intuitive. I believe that UI/UX can make or break a product - even if the rest of the systems are amazing, if the end-user can't get the value they're looking for in an easy-to-understand UI, then it could significantly impact the product in a negative way. The other reason was because it required less setup - I could start getting my hands dirty with the code so I'm more familiar with it. Finally, I wanted to get the code to a clean state before adding any new functionality, and the back-end didn't really have any bugs to fix (not saying that there aren't things that can be changed to make it more efficient for usage, but it worked fine once set-up, so no glaring things to address right off the bat).
 
 After fixing obvious bugs, and cleaning up the anti-patterns/unnecessary code, I decided to do give the UI a simple facelift. Since I was already working on the front-end, it made sense to just finish off the rest of the work I had planned for it anyway. The main goal of updating the UI was to make it easier to use and understand - more intuitive. Keeping with the 'keep it simple' approach, I wanted to update the UI just enough for it to do it's job - no extra bells and whistles. A good cohesive design takes time, so my philosophy is to keep UI as simple as possible - using mainly a white/gray color palette, with just 1 extra primary color (which is the green one I got from solace's website).
 
