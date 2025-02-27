@@ -1,0 +1,21 @@
+name: Deploy to Dev/Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        description: Select an Environment
+        options:
+        - staging
+        - staging2
+        - staging3
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print
+        shell: bash
+        run: |
+          echo "test"
